@@ -8,6 +8,7 @@ A static wedding website hosted on GitHub Pages. Attendance and guest uploads ar
 - `code/styles.css` — layout, colours, responsive design, and animation styles.
 - `code/script.js` — calendar, countdown, mobile navigation, and scroll animations.
 - `assets/favicon.svg` — site icon.
+- `assets/colors.jpeg` — reference palette: chocolate brown `#441F0F`, warm ivory `#F3EBE0`, and sandy beige `#CFAF93`.
 - `assets/images/` — wedding photographs and the Google Forms banner.
 
 All local asset links are relative. Open `index.html` to preview the page.

@@ -1,12 +1,12 @@
-/* Original wedding invitation design. All local assets use relative paths. */
+/* Wedding palette sampled from assets/colors.jpeg. All local assets use relative paths. */
 :root {
-  --brown: #964B00;
-  --ivory: #FFFFF0;
-  --beige: #F5F5DC;
-  --ink: #30231C;
-  --muted: #69594C;
-  --deep: #362218;
-  --border: #D7CAB8;
+  --brown: #441F0F;
+  --ivory: #F3EBE0;
+  --beige: #CFAF93;
+  --ink: #2C180F;
+  --muted: #583B29;
+  --deep: #2B1209;
+  --border: #B39378;
   --display: Georgia, "Times New Roman", serif;
   --body: Arial, Helvetica, sans-serif;
 }
@@ -47,7 +47,7 @@ header { background: var(--ivory); }
 .menu { display: none; border: 1px solid var(--border); background: transparent; min-height: 44px; padding: .4rem .8rem; color: var(--ink); }
 .hero { position: relative; min-height: 760px; min-height: min(880px, 92svh); isolation: isolate; display: grid; align-items: center; background: var(--deep); color: var(--ivory); }
 .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; z-index: -2; }
-.hero::before { content: ""; position: absolute; inset: 0; background: rgba(24, 15, 10, .49); z-index: -1; }
+.hero::before { content: ""; position: absolute; inset: 0; background: rgba(43, 18, 9, .49); z-index: -1; }
 .hero-copy { padding-block: 5rem; }
 h1 { font-size: clamp(3.4rem, 8vw, 7rem); line-height: 1.07; letter-spacing: -.04em; }
 h1 > span { display: block; }
@@ -151,7 +151,7 @@ footer { padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing
 /* Quiet, deliberate motion in the invitation's existing palette. */
 .hero { overflow: clip; }
 .button { transition: background .25s ease, color .25s ease, box-shadow .3s ease, transform .3s ease; }
-.button:focus-visible { box-shadow: 0 8px 24px rgb(54 34 24 / 15%); }
+.button:focus-visible { box-shadow: 0 8px 24px rgb(43 18 9 / 15%); }
 .nav-links a { position: relative; }
 .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 5px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .3s ease; }
 .nav-links a:hover { text-decoration: none; }
@@ -159,9 +159,9 @@ footer { padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing
 .color { transition: transform .45s ease, box-shadow .45s ease; }
 
 @media (hover: hover) and (pointer: fine) {
-  .button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgb(54 34 24 / 16%); }
+  .button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgb(43 18 9 / 16%); }
   .button:active { transform: translateY(0); box-shadow: none; }
-  .swatch:hover .color { transform: translateY(-4px); box-shadow: 0 12px 28px rgb(54 34 24 / 9%); }
+  .swatch:hover .color { transform: translateY(-4px); box-shadow: 0 12px 28px rgb(43 18 9 / 9%); }
 }
 @media (prefers-reduced-motion: no-preference) {
   .hero > img { animation: portrait-settle 2.4s cubic-bezier(.2,.65,.3,1) both; }
