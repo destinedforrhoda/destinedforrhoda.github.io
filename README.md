@@ -13,7 +13,9 @@ Scadio/
 │   ├── server.py        Website and private upload server
 │   ├── requirements.txt
 │   ├── guest-list-template.xlsx
+│   ├── attendance-template.xlsx
 │   ├── test_server.py
+│   ├── test_attendance.py
 │   └── Start uploads.command
 ├── assets/
 │   ├── favicon.svg
@@ -22,9 +24,11 @@ Scadio/
 │   └── Wedding Details.docx
 ├── Guest moments/
 │   ├── Items/           Guest photos and processed videos
+│   ├── Attendance Sheet/
+│   │   └── Attendance Sheet.xlsx
 │   └── List/
 │       ├── Guest moments.xlsx
-│       └── .records.sqlite3   Durable source records
+│       └── .records.sqlite3   Durable upload and attendance records
 └── README.md
 ```
 
@@ -40,6 +44,7 @@ Move or share the whole folder together, preserving its structure.
 - Edit wording, names, dates, contact numbers, map links and photographs directly in `index.html`. JavaScript does not replace this content.
 - Change the `datetime` attribute on `<time id="wedding-date">` to set the calendar and live countdown. Use `YYYY-MM-DDTHH:MM:SS+00:00` for Ghana time. Also update the visible dates and ceremony times wherever they appear in the HTML.
 - Add photos to `assets/images/`, then use their relative paths in the HTML (for example, `./assets/images/Shoot5.jpg`). Add or remove gallery `<figure>` elements as needed.
+- The gallery keeps the photo order in the HTML, with one column on every screen. On phones each photo uses the full screen width within a section at least one screen tall, preserving the whole photograph.
 - Change colors and layout styling in `code/styles.css`.
 - Replace `[Invitation Message]` and `[Closing Message]` in the HTML with your chosen wording.
 - Save your file, then refresh the browser. The preview does not automatically reload when a file is saved. If an old page is already open, use Command–Shift–R once to refresh cached files.
@@ -80,11 +85,13 @@ Do not use `python -m http.server`: it cannot process uploads and would expose t
 
 ## RSVP and hosting
 
-The attendance RSVP form still prepares a response on the current page only. Guests should use the listed phone contacts to confirm attendance. The separate guest-moments upload form does save submitted contact details and files.
+The attendance form saves each guest’s name, phone number and confirmation time to `Guest moments/Attendance Sheet/Attendance Sheet.xlsx`. Each successful confirmation adds a row. Retrying the same request after a connection failure does not duplicate it. The page confirms attendance only after saving succeeds. Names and phones are stored as literal text, preserving leading zeros and preventing Excel formulas.
 
-The title `theowusus.com` does not register or connect a domain. This is currently a local server, so people on other devices cannot use its localhost link. Guest uploads need hosting that runs the Python server with persistent disk storage and HTTPS. Static-only hosting will not support this feature. Keep `code`, `assets` and `Guest moments` as siblings, and expose only the routes served by `server.py`. Use one server process; it safely handles concurrent uploads with threads and a write lock. The `documents` folder is a source reference and does not need to be published.
+Close and reopen the Excel register to see new confirmations. It is rebuilt from the private database on startup, so do not edit it directly; copy it first if you want to annotate it. Attendance and guest uploads both require the Python server. Opening `index.html` directly or using static-only hosting cannot save either form.
+
+The title `theowusus.com` does not register or connect a domain. This is currently a local server, so people on other devices cannot use its localhost link. Attendance confirmations and guest uploads need hosting that runs the Python server with persistent disk storage and HTTPS. Static-only hosting will not support this feature. Keep `code`, `assets` and `Guest moments` as siblings, and expose only the routes served by `server.py`. Use one server process; it safely handles concurrent uploads with threads and a write lock. The `documents` folder is a source reference and does not need to be published.
 
 ## Checks
 
-Run `.venv/bin/python -m unittest discover -s code -p 'test_server.py' -v`.
+Run `.venv/bin/python -m unittest discover -s code -p 'test_*.py' -v`.
 Tests use temporary folders and do not add fake guests to the real register.

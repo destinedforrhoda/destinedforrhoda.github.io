@@ -11,6 +11,7 @@ from zipfile import ZipFile
 import xml.etree.ElementTree as ET
 
 import imageio_ffmpeg
+from PIL import Image
 from server import create_app, video_metadata, ROOT, NS
 
 
@@ -20,7 +21,10 @@ class UploadTests(unittest.TestCase):
         self.storage = Path(self.temp.name) / "Guest moments"
         self.app = create_app(self.storage)
         self.client = self.app.test_client()
-        self.photo = (ROOT / "assets/images/Pic1.jpeg").read_bytes()
+        # Test uploads must not depend on photographs the couple may replace.
+        photo = io.BytesIO()
+        Image.new("RGB", (32, 32), "brown").save(photo, format="JPEG")
+        self.photo = photo.getvalue()
 
     def tearDown(self):
         self.temp.cleanup()

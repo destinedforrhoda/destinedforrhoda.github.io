@@ -1,6 +1,41 @@
 // Edit page content, photos and links in index.html.
 // The calendar and countdown read the wedding-date element's datetime attribute.
 document.documentElement.classList.add("js");
+// Reveal once on arrival. Content stays visible without animation support or JS.
+(() => {
+  const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (preference.matches || !("IntersectionObserver" in window) || !Element.prototype.animate) return;
+  const running = new Map();
+  const observer = new IntersectionObserver(entries => {
+    let delay = 0;
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      if (entry.target.contains(document.activeElement)) return;
+      const animation = entry.target.animate([
+        { opacity: 0, translate: "0 22px" },
+        { opacity: 1, translate: "0 0" }
+      ], { duration: 850, delay, easing: "cubic-bezier(.2,.65,.3,1)", fill: "backwards" });
+      running.set(entry.target, animation);
+      animation.finished.then(() => running.delete(entry.target), () => running.delete(entry.target));
+      delay = Math.min(delay + 55, 165);
+    });
+  }, { threshold: 0, rootMargin: "0px 0px -24px 0px" });
+  document.querySelectorAll(".section .eyebrow, .section h2, .section .intro, .portrait img, .venue, .timeline li, .swatch, .gallery figure, .rsvp-layout, .closing-copy").forEach(element => observer.observe(element));
+  // Keyboard navigation and motion preferences always take priority.
+  document.addEventListener("focusin", event => {
+    running.forEach((animation, element) => {
+      if (element.contains(event.target)) animation.cancel();
+    });
+  });
+  function stopMotion() {
+    observer.disconnect();
+    running.forEach(animation => animation.cancel());
+    running.clear();
+  }
+  preference.addEventListener("change", event => { if (event.matches) stopMotion(); });
+  window.addEventListener("beforeprint", stopMotion);
+})();
 const weddingDate = document.getElementById("wedding-date")?.getAttribute("datetime");
     // Generate the save-the-date calendar using UTC to avoid date shifts.
     const date = new Date(weddingDate);
@@ -48,44 +83,89 @@ const weddingDate = document.getElementById("wedding-date")?.getAttribute("datet
       if (event.key === "Escape") { closeMenu(); menu.focus(); }
     });
 
-    // Local-only RSVP: no fetch, storage, external form service or automatic message.
-    const form = document.getElementById("rsvp-form");
-    const count = document.getElementById("guest-count");
-    const submit = document.getElementById("submit-rsvp");
-    const confirmation = document.getElementById("confirmation");
-    form.addEventListener("change", () => {
-      const declining = form.elements.attendance.value === "no";
-      count.disabled = declining;
-      count.required = !declining;
-    });
-    form.addEventListener("input", () => {
-      submit.disabled = false;
-      submit.textContent = "Prepare my RSVP";
-      confirmation.hidden = true;
-    });
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      const name = form.elements.name;
-      if (!name.value.trim()) {
-        name.setCustomValidity("Please enter your name.");
-        name.reportValidity();
-        name.addEventListener("input", () => name.setCustomValidity(""), { once: true });
-        return;
-      }
-      const attending = form.elements.attendance.value === "yes";
-      const response = attending ? "Attending · " + count.value + " guest(s)." : "Unable to attend.";
-      const message = form.elements.message.value.trim();
-      confirmation.textContent = "Thank you, " + name.value.trim() + ". Your response is prepared on this page: " + response + " Nothing has been sent or permanently stored. Please contact " + Array.from(document.querySelectorAll("#contacts a span:first-child"), contact => contact.textContent.trim()).join(", ") + " to confirm your RSVP.";
-      if (message) {
-        const note = document.createElement("p");
-        note.textContent = "Your message: " + message;
-        confirmation.append(note);
-      }
-      confirmation.hidden = false;
-      submit.disabled = true;
-      submit.textContent = "Response prepared";
-    });
-    form.hidden = false;
+// Attendance is confirmed only after the server saves the Excel register.
+(() => {
+  const form = document.getElementById("rsvp-form");
+  const submit = document.getElementById("submit-rsvp");
+  const confirmation = document.getElementById("confirmation");
+  const name = document.getElementById("guest-name");
+  const phone = document.getElementById("guest-phone");
+  const api = new URL("./api/attendance", window.location.href);
+  let busy = false;
+  let confirmed = false;
+  let requestId = null;
+  function showStatus(message, error = false) {
+    confirmation.textContent = message;
+    confirmation.classList.toggle("error", error);
+    confirmation.hidden = false;
+  }
+  form.addEventListener("input", () => {
+    if (busy) return;
+    confirmed = false;
+    requestId = null;
+    submit.disabled = false;
+    submit.textContent = "Confirm Attendance";
+    confirmation.hidden = true;
+  });
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (busy || confirmed || !form.reportValidity()) return;
+    if (!name.value.trim()) {
+      showStatus("Please enter your name.", true);
+      name.focus();
+      return;
+    }
+    const digits = phone.value.replace(/\D/g, "");
+    if (!/^\+?[0-9() .-]{7,30}$/.test(phone.value.trim()) || digits.length < 7 || digits.length > 15) {
+      showStatus("Please enter a valid phone number, including your country code.", true);
+      phone.focus();
+      return;
+    }
+    if (window.location.protocol === "file:") {
+      showStatus("Please open the invitation using its website link to confirm attendance, or call one of the contacts listed.", true);
+      return;
+    }
+    requestId ||= newRequestId();
+    const details = {name: name.value.trim(), phone: phone.value.trim()};
+    busy = true;
+    form.setAttribute("aria-busy", "true");
+    name.disabled = phone.disabled = submit.disabled = true;
+    submit.textContent = "Confirming…";
+    showStatus("Saving your attendance…");
+    try {
+      const response = await fetch(api, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "X-Wedding-Attendance": "1", "X-Confirmation-ID": requestId},
+        body: JSON.stringify(details),
+        signal: AbortSignal.timeout(30000)
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.saved) throw new Error(result.error || "Your attendance could not be saved. Please try again.");
+      confirmed = true;
+      showStatus("Thank you, " + details.name + "! Your attendance is confirmed. We look forward to celebrating with you.");
+    } catch (error) {
+      showStatus(error.name === "TypeError" || error.name === "TimeoutError"
+        ? "We couldn’t confirm your attendance because the connection was interrupted. Please try again or call one of the contacts listed."
+        : error.message, true);
+    } finally {
+      busy = false;
+      form.removeAttribute("aria-busy");
+      name.disabled = phone.disabled = false;
+      submit.disabled = confirmed;
+      submit.textContent = confirmed ? "Attendance confirmed" : "Confirm Attendance";
+    }
+  });
+  form.hidden = false;
+})();
+
+function newRequestId() {
+  if (window.crypto.randomUUID) return window.crypto.randomUUID();
+  const bytes = window.crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 15) | 64;
+  bytes[8] = (bytes[8] & 63) | 128;
+  const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
 
 // Ghana is UTC+00:00. The HTML datetime includes its timezone for all guests.
 (() => {
@@ -135,14 +215,6 @@ const weddingDate = document.getElementById("wedding-date")?.getAttribute("datet
     status.textContent = message;
     status.className = "upload-status" + (kind ? " " + kind : "");
   }
-  function newId() {
-    if (window.crypto.randomUUID) return window.crypto.randomUUID();
-    const bytes = window.crypto.getRandomValues(new Uint8Array(16));
-    bytes[6] = (bytes[6] & 15) | 64;
-    bytes[8] = (bytes[8] & 63) | 128;
-    const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
-    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
-  }
   openButton.disabled = false;
   openButton.addEventListener("click", async () => {
     dialog.showModal();
@@ -190,7 +262,7 @@ const weddingDate = document.getElementById("wedding-date")?.getAttribute("datet
       setStatus("Please enter a valid phone number, including your country code.", "error"); phone.focus(); return;
     }
     const data = new FormData(uploadForm);
-    requestId ||= newId();
+    requestId ||= newRequestId();
     busy = true;
     uploadForm.setAttribute("aria-busy", "true");
     [...uploadForm.elements].forEach(element => { element.disabled = true; });

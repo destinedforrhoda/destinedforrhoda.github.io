@@ -103,14 +103,16 @@ def prepare_media(source: Path, original_name: str, work: Path) -> dict:
             "saved_seconds": None, "trimmed": False}
 
 
-def export_register(database: sqlite3.Connection, destination: Path) -> None:
+def export_register(database: sqlite3.Connection, destination: Path, *, attendance: bool = False) -> None:
     """Populate the styled Excel template with durable upload records.
 
     The template is authored with Artifact Tool. Runtime export writes typed
     OpenXML cells, so user input is always literal text, never an Excel formula.
     Rebuilding from SQLite makes the register recoverable after a restart.
     """
-    with ZipFile(CODE / "guest-list-template.xlsx") as archive:
+    template = "attendance-template.xlsx" if attendance else "guest-list-template.xlsx"
+    columns = "ABC" if attendance else "ABCDEFGHI"
+    with ZipFile(CODE / template) as archive:
         entries = {name: archive.read(name) for name in archive.namelist()}
     sheet = ET.fromstring(entries["xl/worksheets/sheet1.xml"])
     sheet.attrib.pop("{http://schemas.openxmlformats.org/markup-compatibility/2006}Ignorable", None)
@@ -120,15 +122,18 @@ def export_register(database: sqlite3.Connection, destination: Path) -> None:
     for row in list(data):
         if int(row.attrib["r"]) >= 6:
             data.remove(row)
-    records = database.execute("SELECT * FROM uploads ORDER BY received, id").fetchall()
+    table = "attendance" if attendance else "uploads"
+    records = database.execute(f"SELECT * FROM {table} ORDER BY received, id").fetchall()
     for row_number, record in enumerate(records, start=6):
         timestamp = datetime.fromisoformat(record["received"])
         excel_date = (timestamp - datetime(1899, 12, 30, tzinfo=timezone.utc)).total_seconds() / 86400
-        values = [excel_date, record["name"], record["phone"], record["original_name"],
-                  "../Items/" + record["saved_name"], record["media_type"], record["original_seconds"],
-                  record["saved_seconds"], "Yes" if record["trimmed"] else "No"]
-        row = ET.SubElement(data, f"{{{NS}}}row", {"r": str(row_number), "ht": "32", "customHeight": "1"})
-        for column, value in zip("ABCDEFGHI", values):
+        values = [excel_date, record["name"], record["phone"]]
+        if not attendance:
+            values += [record["original_name"], "../Items/" + record["saved_name"], record["media_type"],
+                       record["original_seconds"], record["saved_seconds"], "Yes" if record["trimmed"] else "No"]
+        height = max(32, math.ceil(len(record["name"]) / 34) * 16) if attendance else 32
+        row = ET.SubElement(data, f"{{{NS}}}row", {"r": str(row_number), "ht": str(height), "customHeight": "1"})
+        for column, value in zip(columns, values):
             cell = ET.SubElement(row, f"{{{NS}}}c", {"r": f"{column}{row_number}", "s": styles.get(column, "0")})
             if value is None:
                 continue
@@ -144,7 +149,7 @@ def export_register(database: sqlite3.Connection, destination: Path) -> None:
     last_row = max(6, len(records) + 5)
     dimension = sheet.find(f"{{{NS}}}dimension")
     if dimension is not None:
-        dimension.set("ref", f"A1:I{last_row}")
+        dimension.set("ref", f"A1:{columns[-1]}{last_row}")
     entries["xl/worksheets/sheet1.xml"] = ET.tostring(sheet, encoding="utf-8", xml_declaration=True)
     with ZipFile(destination, "w", ZIP_DEFLATED) as output:
         for name, content in entries.items():
@@ -157,10 +162,12 @@ def create_app(storage_root: Path | None = None) -> Flask:
                       MAX_FORM_PARTS=10)
     storage = Path(storage_root) if storage_root else ROOT / "Guest moments"
     items, lists, incoming = storage / "Items", storage / "List", storage / ".incoming"
-    for folder in (items, lists, incoming):
+    attendance_folder = storage / "Attendance Sheet"
+    for folder in (items, lists, incoming, attendance_folder):
         folder.mkdir(parents=True, exist_ok=True)
     db_path = lists / ".records.sqlite3"
     workbook_path = lists / "Guest moments.xlsx"
+    attendance_path = attendance_folder / "Attendance Sheet.xlsx"
     write_lock = threading.Lock()
     processing_slots = threading.BoundedSemaphore(2)
 
@@ -180,8 +187,12 @@ def create_app(storage_root: Path | None = None) -> Flask:
             id TEXT PRIMARY KEY, received TEXT NOT NULL, name TEXT NOT NULL, phone TEXT NOT NULL,
             original_name TEXT NOT NULL, saved_name TEXT NOT NULL UNIQUE, media_type TEXT NOT NULL,
             original_seconds REAL, saved_seconds REAL, trimmed INTEGER NOT NULL)""")
+        database.execute("""CREATE TABLE IF NOT EXISTS attendance (
+            id TEXT PRIMARY KEY, received TEXT NOT NULL, name TEXT NOT NULL, phone TEXT NOT NULL)""")
         export_register(database, lists / ".register-startup.xlsx")
         os.replace(lists / ".register-startup.xlsx", workbook_path)
+        export_register(database, attendance_folder / ".register-startup.xlsx", attendance=True)
+        os.replace(attendance_folder / ".register-startup.xlsx", attendance_path)
 
     @app.after_request
     def headers(response):
@@ -231,6 +242,50 @@ def create_app(storage_root: Path | None = None) -> Flask:
     @app.get("/api/moments/status")
     def status():
         return jsonify(ready=True, maxSeconds=MAX_VIDEO_SECONDS, maxBytes=MAX_FILE_BYTES)
+
+    @app.post("/api/attendance")
+    def confirm_attendance():
+        origin = request.headers.get("Origin")
+        if request.headers.get("X-Wedding-Attendance") != "1" or (origin and urlsplit(origin).netloc != request.host):
+            abort(403, "Please confirm through the wedding invitation.")
+        if request.content_length is None or request.content_length > 4096:
+            abort(400, "Please enter only your name and phone number.")
+        try:
+            confirmation_id = str(UUID(request.headers.get("X-Confirmation-ID", "")))
+        except ValueError:
+            abort(400, "Please refresh the page and confirm again.")
+        details = request.get_json(silent=True)
+        if not isinstance(details, dict) or not all(isinstance(details.get(key), str) for key in ("name", "phone")):
+            abort(400, "Please enter your name and phone number.")
+        name, phone = details["name"].strip(), details["phone"].strip()
+        if not name or len(name) > 120 or any(ord(c) < 32 or 0xD800 <= ord(c) <= 0xDFFF or ord(c) in (0xFFFE, 0xFFFF) for c in name):
+            abort(400, "Please enter your name (up to 120 characters).")
+        if not re.fullmatch(r"\+?[0-9() .-]{7,30}", phone) or not 7 <= len(re.sub(r"\D", "", phone)) <= 15:
+            abort(400, "Please enter a valid phone number, including your country code.")
+        with write_lock, connect() as database:
+            existing = database.execute("SELECT name, phone FROM attendance WHERE id=?", (confirmation_id,)).fetchone()
+            if existing and (existing["name"] != name or existing["phone"] != phone):
+                abort(409, "Your details changed. Please refresh the page and confirm again.")
+            staged = attendance_folder / ".register-pending.xlsx"
+            try:
+                if not existing:
+                    database.execute("INSERT INTO attendance VALUES (?, ?, ?, ?)",
+                        (confirmation_id, datetime.now(timezone.utc).isoformat(), name, phone))
+                export_register(database, staged, attendance=True)
+                os.replace(staged, attendance_path)
+                database.commit()
+            except Exception:
+                database.rollback()
+                app.logger.exception("Could not save attendance register")
+                try:
+                    export_register(database, staged, attendance=True)
+                    os.replace(staged, attendance_path)
+                except Exception:
+                    app.logger.exception("Could not restore attendance register")
+                return jsonify(error="Your attendance could not be saved. Please try again shortly."), 503
+            finally:
+                staged.unlink(missing_ok=True)
+        return jsonify(saved=True), 200 if existing else 201
 
     @app.post("/api/moments")
     def upload():
