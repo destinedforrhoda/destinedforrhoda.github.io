@@ -44,7 +44,7 @@ Move or share the whole folder together, preserving its structure.
 - Edit wording, names, dates, contact numbers, map links and photographs directly in `index.html`. JavaScript does not replace this content.
 - Change the `datetime` attribute on `<time id="wedding-date">` to set the calendar and live countdown. Use `YYYY-MM-DDTHH:MM:SS+00:00` for Ghana time. Also update the visible dates and ceremony times wherever they appear in the HTML.
 - Add photos to `assets/images/`, then use their relative paths in the HTML (for example, `./assets/images/Shoot5.jpg`). Add or remove gallery `<figure>` elements as needed.
-- The gallery keeps the photo order in the HTML, with one column on every screen. On phones each photo uses the full screen width at its natural proportions, with an 8-pixel gap between photos. Photos reveal after loading when they enter view, and replay when scrolled out and back into view. The footer’s Animations button lets guests enable or disable motion; the default follows their device preference.
+- The gallery keeps the photo order in the HTML, with one column on every screen. On phones each photo uses the full screen width at its natural proportions, with an 8-pixel gap between photos. Photos reveal as they enter view after loading; reduced-motion preferences are respected.
 - Change colors and layout styling in `code/styles.css`.
 - Replace `[Invitation Message]` and `[Closing Message]` in the HTML with your chosen wording.
 - Save your file, then refresh the browser. The preview does not automatically reload when a file is saved. If an old page is already open, use Command–Shift–R once to refresh cached files.

@@ -1,72 +1,53 @@
 // Edit page content, photos and links in index.html.
 // The calendar and countdown read the wedding-date element's datetime attribute.
 document.documentElement.classList.add("js");
-// Motion follows the device preference unless the guest explicitly chooses otherwise.
+// Reveal once on arrival. Content stays visible without animation support or JS.
 (() => {
-  const root = document.documentElement;
   const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const toggle = document.getElementById("motion-toggle");
-  let choice = null;
-  try { choice = localStorage.getItem("wedding-motion"); } catch { /* Storage can be unavailable in private browsing. */ }
-  let enabled = false;
-  let observer;
-  const inView = new Set();
-  const targets = [...document.querySelectorAll(".section .eyebrow, .section h2, .section .intro, .portrait img, .venue, .timeline li, .swatch, .gallery img, .rsvp-layout, .closing-copy")];
-  function stopReveals() {
-    observer?.disconnect();
-    targets.forEach(element => element.classList.remove("reveal-enter"));
-    inView.clear();
-  }
-  function applyMotion() {
-    stopReveals();
-    enabled = choice === "on" || (choice !== "off" && !preference.matches);
-    root.dataset.motion = enabled ? "on" : "off";
-    toggle.textContent = enabled ? "Animations: on" : "Animations: off — tap to enable";
-    toggle.setAttribute("aria-pressed", String(enabled));
-    toggle.hidden = false;
-    if (!enabled || !("IntersectionObserver" in window)) return;
-    observer = new IntersectionObserver(entries => {
-      let delay = 0;
-      entries.forEach(entry => {
-        const element = entry.target;
-        if (!entry.isIntersecting) {
-          element.classList.remove("reveal-enter");
-          inView.delete(element);
-          return;
-        }
-        // Start when a meaningful part of the content is visible, not at the first pixel.
-        if (entry.intersectionRatio < 0.1 || inView.has(element)) return;
-        inView.add(element);
-        if (element.contains(document.activeElement)) return;
-        element.style.setProperty("--reveal-delay", delay + "ms");
-        element.classList.add("reveal-enter");
-        delay = Math.min(delay + 70, 210);
-      });
-    }, { threshold: [0, 0.1], rootMargin: "0px 0px -16px 0px" });
-    targets.forEach(element => {
-      if (element.tagName !== "IMG" || element.complete) observer.observe(element);
+  if (preference.matches || !("IntersectionObserver" in window) || !Element.prototype.animate) return;
+  const running = new Map();
+  const observer = new IntersectionObserver(entries => {
+    let delay = 0;
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      if (entry.target.contains(document.activeElement)) return;
+      const animation = entry.target.animate([
+        { opacity: 0, transform: "translateY(24px)" },
+        { opacity: 1, transform: "translateY(0)" }
+      ], { duration: 850, delay, easing: "cubic-bezier(.2,.65,.3,1)", fill: "backwards" });
+      running.set(entry.target, animation);
+      animation.finished.then(() => running.delete(entry.target), () => running.delete(entry.target));
+      delay = Math.min(delay + 55, 165);
     });
-  }
-  // Lazy images join the observer only once there is a photo to animate.
-  targets.filter(element => element.tagName === "IMG").forEach(image => {
-    image.addEventListener("load", () => { if (enabled && observer) observer.observe(image); });
+  }, { threshold: 0.08, rootMargin: "0px 0px -24px 0px" });
+  let stopped = false;
+  document.querySelectorAll(".section .eyebrow, .section h2, .section .intro, .portrait img, .venue, .timeline li, .swatch, .gallery img, .rsvp-layout, .closing-copy").forEach(element => {
+    // Lazy photos must be loaded before their one-time reveal can start.
+    // Observe the photo itself, not the space around it.
+    const observe = () => { if (!stopped) observer.observe(element); };
+    if (element.tagName === "IMG" && !element.complete) {
+      element.addEventListener("load", observe, { once: true });
+    } else {
+      observe();
+    }
   });
+  // Keyboard navigation and motion preferences always take priority.
   document.addEventListener("focusin", event => {
-    targets.forEach(element => {
-      if (element.contains(event.target)) element.classList.remove("reveal-enter");
+    running.forEach((animation, element) => {
+      if (element.contains(event.target)) animation.cancel();
     });
   });
-  toggle.addEventListener("click", () => {
-    choice = enabled ? "off" : "on";
-    try { localStorage.setItem("wedding-motion", choice); } catch { /* Keep the choice for this visit. */ }
-    applyMotion();
-  });
-  const preferenceChanged = () => { if (choice !== "on" && choice !== "off") applyMotion(); };
+  function stopMotion() {
+    stopped = true;
+    observer.disconnect();
+    running.forEach(animation => animation.cancel());
+    running.clear();
+  }
+  const preferenceChanged = event => { if (event.matches) stopMotion(); };
   if (preference.addEventListener) preference.addEventListener("change", preferenceChanged);
   else if (preference.addListener) preference.addListener(preferenceChanged);
-  window.addEventListener("beforeprint", stopReveals);
-  window.addEventListener("afterprint", applyMotion);
-  applyMotion();
+  window.addEventListener("beforeprint", stopMotion);
 })();
 const weddingDate = document.getElementById("wedding-date")?.getAttribute("datetime");
     // Generate the save-the-date calendar using UTC to avoid date shifts.
