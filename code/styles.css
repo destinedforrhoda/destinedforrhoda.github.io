@@ -77,7 +77,8 @@ h1 > span { display: block; }
 .timeline li::before { content: ""; position: absolute; width: 9px; height: 9px; background: var(--brown); border-radius: 50%; left: -5px; top: .55rem; }
 .timeline .time { font-size: .875rem; color: var(--brown); letter-spacing: .14em; }
 .timeline h3 { margin: .5rem 0 .8rem; }
-.palette-section { border-top: 1px solid var(--border); }
+.palette-section { background: #607585; color: #FFFFFF; border-top: 1px solid #607585; }
+.palette-section .muted, .palette-section .swatch p { color: #FFFFFF; }
 .swatches { display: flex; justify-content: center; gap: clamp(1rem, 5vw, 5rem); margin-top: 3rem; }
 .swatch { flex: 1; max-width: 210px; min-width: 0; }
 .color { width: 100%; aspect-ratio: 1; border: 1px solid var(--border); border-radius: 50%; margin-bottom: 1.4rem; }
