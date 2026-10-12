@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import unittest
 from uuid import uuid4
+from urllib.parse import urlsplit
 from zipfile import ZipFile
 import xml.etree.ElementTree as ET
 
@@ -107,7 +108,7 @@ class UploadTests(unittest.TestCase):
             assets.feed(response.get_data(as_text=True))
         for path in assets.paths:
             self.assertTrue(path.startswith("./"), path)
-            self.assertTrue((ROOT / path).is_file(), path)
+            self.assertTrue((ROOT / urlsplit(path).path).is_file(), path)
             with self.client.get("/" + path.removeprefix("./")) as response:
                 self.assertEqual(response.status_code, 200, path)
         self.assertFalse((ROOT / "code/index.html").exists())

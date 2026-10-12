@@ -13,15 +13,25 @@ document.documentElement.classList.add("js");
       observer.unobserve(entry.target);
       if (entry.target.contains(document.activeElement)) return;
       const animation = entry.target.animate([
-        { opacity: 0, translate: "0 22px" },
-        { opacity: 1, translate: "0 0" }
+        { opacity: 0, transform: "translateY(24px)" },
+        { opacity: 1, transform: "translateY(0)" }
       ], { duration: 850, delay, easing: "cubic-bezier(.2,.65,.3,1)", fill: "backwards" });
       running.set(entry.target, animation);
       animation.finished.then(() => running.delete(entry.target), () => running.delete(entry.target));
       delay = Math.min(delay + 55, 165);
     });
-  }, { threshold: 0, rootMargin: "0px 0px -24px 0px" });
-  document.querySelectorAll(".section .eyebrow, .section h2, .section .intro, .portrait img, .venue, .timeline li, .swatch, .gallery figure, .rsvp-layout, .closing-copy").forEach(element => observer.observe(element));
+  }, { threshold: 0.08, rootMargin: "0px 0px -24px 0px" });
+  let stopped = false;
+  document.querySelectorAll(".section .eyebrow, .section h2, .section .intro, .portrait img, .venue, .timeline li, .swatch, .gallery img, .rsvp-layout, .closing-copy").forEach(element => {
+    // Lazy photos must be loaded before their one-time reveal can start.
+    // Observe the photo itself, not the space around it.
+    const observe = () => { if (!stopped) observer.observe(element); };
+    if (element.tagName === "IMG" && !element.complete) {
+      element.addEventListener("load", observe, { once: true });
+    } else {
+      observe();
+    }
+  });
   // Keyboard navigation and motion preferences always take priority.
   document.addEventListener("focusin", event => {
     running.forEach((animation, element) => {
@@ -29,11 +39,14 @@ document.documentElement.classList.add("js");
     });
   });
   function stopMotion() {
+    stopped = true;
     observer.disconnect();
     running.forEach(animation => animation.cancel());
     running.clear();
   }
-  preference.addEventListener("change", event => { if (event.matches) stopMotion(); });
+  const preferenceChanged = event => { if (event.matches) stopMotion(); };
+  if (preference.addEventListener) preference.addEventListener("change", preferenceChanged);
+  else if (preference.addListener) preference.addListener(preferenceChanged);
   window.addEventListener("beforeprint", stopMotion);
 })();
 const weddingDate = document.getElementById("wedding-date")?.getAttribute("datetime");
