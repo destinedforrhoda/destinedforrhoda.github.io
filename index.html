@@ -7,8 +7,8 @@
   <meta name="description" content="Desmond and Rhodalyn — 17 October 2026, Suhum. Wedding details, schedule and RSVP.">
   <meta name="theme-color" content="#964B00">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./code/styles.css?v=20261012-2">
-  <script src="./code/script.js?v=20261012-2" defer></script>
+  <link rel="stylesheet" href="./code/styles.css?v=20261012-forms">
+  <script src="./code/script.js?v=20261012-forms" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to invitation</a>
@@ -95,15 +95,12 @@
     </section>
     <section class="section" id="rsvp" aria-labelledby="rsvp-heading">
       <div class="wrap"><div class="center"><p class="eyebrow">RSVP</p><h2 id="rsvp-heading">Attendance</h2></div>
-        <div class="rsvp-layout"><div><p>Kindly reach out to any of the contacts below for more info or assistance:</p><ul class="contacts" id="contacts"><li><a href="tel:+233541502110"><span>Capt. Owusu</span><span>+233 54 150 2110</span></a></li><li><a href="tel:+233594006034"><span>Jeffery</span><span>+233 59 400 6034</span></a></li><li><a href="tel:+233556871176"><span>Irene</span><span>+233 55 687 1176</span></a></li></ul></div><div><form id="rsvp-form" aria-label="Confirm your attendance" aria-describedby="form-note" hidden>
-              <div class="fields">
-                <div><label for="guest-name">Guest name</label><input id="guest-name" name="name" autocomplete="name" required maxlength="120"></div>
-                <div><label for="guest-phone">Guest Contact</label><input id="guest-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="e.g. +233 54 123 4567" maxlength="30" required></div>
-              </div>
-              <p class="form-note" id="form-note">Confirm your attendance at the ceremony. Your name and phone number will be saved privately for the couple.</p>
-              <button class="button" type="submit" id="submit-rsvp">Confirm Attendance</button>
-              <div class="confirmation" id="confirmation" role="status" aria-live="polite" hidden></div>
-            </form><noscript><p>Please call one of the RSVP contacts to confirm your attendance.</p></noscript></div></div>
+        <div class="rsvp-layout"><div><p>Kindly reach out to any of the contacts below for more info or assistance:</p><ul class="contacts" id="contacts"><li><a href="tel:+233541502110"><span>Capt. Owusu</span><span>+233 54 150 2110</span></a></li><li><a href="tel:+233594006034"><span>Jeffery</span><span>+233 59 400 6034</span></a></li><li><a href="tel:+233556871176"><span>Irene</span><span>+233 55 687 1176</span></a></li></ul></div><div class="rsvp-card">
+              <h3>Celebrate with us</h3>
+              <p>Please let us know if you’ll be joining us. Share your name and phone number using our attendance form.</p>
+              <a class="button" href="https://forms.gle/sSDJohEdpAjEx4Rz9" target="_blank" rel="noopener noreferrer" aria-describedby="rsvp-link-note">Confirm Attendance</a>
+              <p class="link-note" id="rsvp-link-note">Opens our Google Form in a new tab.</p>
+            </div></div>
       </div>
     </section>
     <section class="section tinted" id="gallery" aria-labelledby="gallery-heading">
@@ -136,30 +133,11 @@ With love,</p></div>
         <p class="eyebrow">Through your eyes</p>
         <h2 id="moments-heading">Share with us your captured moments</h2>
         <p class="intro muted">We’d love to see the day through your eyes. Share your photos and videos with us.</p>
-        <button class="button" type="button" id="open-moments" disabled>Upload moments</button>
-        <p class="moments-caption">Upload your pictures and videos. Video longer than 3 minutes will be trimmed.</p>
-        <noscript><p>Please enable JavaScript to upload your moments.</p></noscript>
+        <a class="button" href="https://forms.gle/iqYvLdGNRwUPn83f6" target="_blank" rel="noopener noreferrer" aria-describedby="moments-link-note">Upload moments</a>
+        <p class="moments-caption" id="moments-link-note">Opens our Google Form in a new tab. A Google account is required to upload. Please keep videos to 3 minutes or less and trim longer clips before uploading.</p>
       </div>
     </section>
   </main>
-  <dialog id="moments-dialog" aria-labelledby="upload-heading" aria-describedby="upload-notice">
-    <div class="dialog-heading">
-      <div><p class="eyebrow">A memory to keep</p><h2 id="upload-heading">Your captured moment</h2></div>
-      <button class="dialog-close" type="button" id="close-moments" aria-label="Close upload form">&times;</button>
-    </div>
-    <p id="upload-notice" class="upload-notice"><strong>Please do not send videos longer than 3 minutes.</strong> If you choose a longer video, we’ll automatically keep only the first 3 minutes.</p>
-    <form id="moments-form" aria-describedby="upload-notice upload-privacy">
-      <div class="fields">
-        <div><label for="moment-name">Your name</label><input id="moment-name" name="name" autocomplete="name" maxlength="120" required></div>
-        <div><label for="moment-phone">Phone number</label><input id="moment-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="e.g. +233 54 123 4567" maxlength="30" required></div>
-        <div class="file-field"><label for="moment-item">Choose a photo or video</label><input id="moment-item" name="item" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.mp4,.mov,.m4v,.webm,.mkv,.avi,.3gp" required><p class="small-note">One item at a time, up to 250 MB. You can upload another after this one.</p></div>
-      </div>
-      <p id="upload-privacy" class="small-note">Your name and phone number will be saved with your item for the couple. They won’t appear in the public gallery.</p>
-      <div id="upload-progress" hidden><label for="moment-progress">Upload progress</label><progress id="moment-progress" max="100" value="0"></progress></div>
-      <p id="upload-status" class="upload-status" role="status" aria-live="polite"></p>
-      <button class="button" id="send-moment" type="submit">Upload moment</button>
-    </form>
-  </dialog>
   <footer><a href="#home">DEStinedforRHoda2026</a></footer>
 </body>
 </html>

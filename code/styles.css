@@ -20,8 +20,8 @@ h3 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
 p + p { margin-top: 1rem; }
 img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-underline-offset: .3em; }
-button, input, select, textarea { font: inherit; }
-button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
 button, .button { cursor: pointer; }
 :focus-visible { outline: 3px solid var(--brown); outline-offset: 5px; }
 .dark :focus-visible, .hero :focus-visible { outline-color: var(--ivory); }
@@ -34,7 +34,6 @@ button, .button { cursor: pointer; }
 .intro { max-width: 620px; margin: 1.5rem auto 0; }
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: .75rem 1.8rem; background: var(--brown); color: var(--ivory); border: 1px solid var(--brown); text-decoration: none; font-size: .875rem; letter-spacing: .06em; transition: background .2s; }
 .button:hover { background: var(--deep); }
-.button:disabled { opacity: .65; cursor: default; }
 .button.light { background: var(--ivory); border-color: var(--ivory); color: var(--deep); }
 .button.light:hover { background: var(--beige); }
 .skip { position: fixed; top: -100px; left: 1rem; z-index: 10; padding: .8rem; background: var(--ivory); }
@@ -92,17 +91,10 @@ h1 > span { display: block; }
 .contacts li { border-bottom: 1px solid var(--border); }
 .contacts a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem 1rem; padding: .9rem 0; text-decoration: none; }
 .contacts a span:last-child { text-decoration: underline; text-underline-offset: .25em; }
-form { padding: clamp(1.2rem, 4vw, 2.5rem); border: 1px solid var(--border); }
-.fields { display: grid; gap: 1.2rem; }
-label, legend { display: block; font-size: .875rem; margin-bottom: .4rem; }
-input, select, textarea { width: 100%; min-height: 48px; border: 1px solid var(--border); border-radius: 0; padding: .7rem; background: var(--ivory); color: var(--ink); }
-textarea { min-height: 110px; resize: vertical; }
-fieldset { padding: 0; border: 0; margin: 0; min-width: 0; }
-.radio { display: flex; align-items: center; gap: .6rem; min-height: 44px; margin: 0; }
-input[type="radio"] { width: 19px; height: 19px; min-height: 0; accent-color: var(--brown); flex-shrink: 0; }
-.form-note { font-size: .875rem; line-height: 1.6; color: var(--muted); margin: 1.2rem 0; }
-.confirmation { margin-top: 1rem; padding: 1rem; border-left: 3px solid var(--brown); background: var(--beige); overflow-wrap: anywhere; }
-.confirmation.error { border-color: #a52a2a; color: #852222; }
+.rsvp-card { padding: clamp(1.2rem, 4vw, 2.5rem); border: 1px solid var(--border); align-self: start; }
+.rsvp-card h3 { margin-bottom: 1rem; }
+.rsvp-card .button { margin-top: 1.5rem; }
+.link-note { margin-top: 1rem; color: var(--muted); font-size: .8125rem; }
 .gallery { display: flex; flex-direction: column; gap: 24px; max-width: 850px; margin: 3rem auto 0; }
 .gallery figure { margin: 0; }
 .gallery img { display: block; width: 100%; height: auto; }
@@ -151,32 +143,11 @@ footer { padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing
   .countdown-number { font-size: 2.25rem; }
 }
 
-/* Guest uploads: matching ivory and brown, with a native accessible dialog. */
+/* Guest moments link to the couple’s Google Form. */
 .share-moments { border-bottom: 1px solid var(--border); }
 .share-moments h2 { max-width: 780px; margin-inline: auto; }
 .share-moments .button { margin-top: 2rem; }
 .moments-caption { max-width: 530px; margin: 1.4rem auto 0; color: var(--muted); font-size: .875rem; }
-dialog { width: min(580px, calc(100% - 32px)); max-height: 90vh; max-height: 90svh; padding: clamp(1.25rem, 4vw, 2.25rem); border: 1px solid var(--border); background: var(--ivory); color: var(--ink); overflow-y: auto; overscroll-behavior: contain; }
-dialog::backdrop { background: rgba(30, 20, 14, .65); }
-body:has(dialog[open]) { overflow: hidden; }
-.dialog-heading { display: flex; align-items: start; gap: 1rem; justify-content: space-between; }
-.dialog-heading h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); }
-.dialog-heading .eyebrow { margin-bottom: .7rem; }
-.dialog-close { flex: 0 0 44px; min-height: 44px; border: 1px solid var(--border); background: transparent; color: var(--ink); font-size: 1.6rem; line-height: 1; }
-.upload-notice { padding: 1rem; margin-top: 1.5rem; background: var(--beige); font-size: .875rem; }
-.upload-notice strong { display: block; margin-bottom: .4rem; }
-#moments-form { padding: 0; border: 0; margin-top: 1.5rem; }
-.file-field { min-width: 0; }
-.file-field input { max-width: 100%; font-size: .875rem; padding: .6rem; }
-.file-field input::file-selector-button { padding: .6rem; border: 1px solid var(--border); background: var(--beige); color: var(--ink); margin-right: .5rem; cursor: pointer; }
-.small-note { font-size: .8125rem; color: var(--muted); margin-top: .75rem; }
-.upload-status { font-size: .875rem; overflow-wrap: anywhere; margin: 1rem 0; }
-.upload-status.error { color: #9B2828; }
-.upload-status.success { color: #315B36; }
-#upload-progress { margin-top: 1rem; }
-progress { width: 100%; height: 12px; accent-color: var(--brown); }
-#send-moment { width: 100%; }
-
 /* Quiet, deliberate motion in the invitation's existing palette. */
 .hero { overflow: clip; }
 .button { transition: background .25s ease, color .25s ease, box-shadow .3s ease, transform .3s ease; }
@@ -185,13 +156,11 @@ progress { width: 100%; height: 12px; accent-color: var(--brown); }
 .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 5px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .3s ease; }
 .nav-links a:hover { text-decoration: none; }
 .nav-links a:hover::after, .nav-links a:focus-visible::after { transform: scaleX(1); }
-input, textarea { transition: border-color .25s ease, box-shadow .25s ease; }
-input:focus, textarea:focus { border-color: var(--brown); box-shadow: 0 0 0 4px rgb(150 75 0 / 7%); }
 .color { transition: transform .45s ease, box-shadow .45s ease; }
 
 @media (hover: hover) and (pointer: fine) {
-  .button:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgb(54 34 24 / 16%); }
-  .button:not(:disabled):active { transform: translateY(0); box-shadow: none; }
+  .button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgb(54 34 24 / 16%); }
+  .button:active { transform: translateY(0); box-shadow: none; }
   .swatch:hover .color { transform: translateY(-4px); box-shadow: 0 12px 28px rgb(54 34 24 / 9%); }
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -201,9 +170,6 @@ input:focus, textarea:focus { border-color: var(--brown); box-shadow: 0 0 0 4px 
   .hero-copy h1 > span:last-child { animation: invitation-arrive 1.1s .35s both; }
   .hero-copy > .hero-date { animation: invitation-arrive 1s .5s both; }
   .hero-copy > .button { animation: invitation-arrive 1s .65s backwards; }
-  dialog[open] { animation: invitation-arrive .35s ease-out; }
-  dialog[open]::backdrop { animation: veil-arrive .3s ease-out; }
-  .confirmation:not([hidden]) { animation: invitation-arrive .4s ease-out; }
   .js .nav-links.open { animation: invitation-arrive .25s ease-out; }
 }
 @keyframes invitation-arrive {
@@ -214,13 +180,9 @@ input:focus, textarea:focus { border-color: var(--brown); box-shadow: 0 0 0 4px 
   from { transform: scale(1.035); }
   to { transform: scale(1); }
 }
-@keyframes veil-arrive {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .button:not(:disabled):hover, .swatch:hover .color { transform: none; }
+  .button:hover, .swatch:hover .color { transform: none; }
 }
 @media print {
   *, *::before, *::after { animation: none !important; transition: none !important; }

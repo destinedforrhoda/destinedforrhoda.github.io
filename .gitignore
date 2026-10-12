@@ -1,4 +1,8 @@
+.DS_Store
+# Keep guest records and local environments out of the public repository.
+Guest moments/
 .venv/
 __pycache__/
-.DS_Store
-Guest moments/
+*.xlsx
+*.xls
+*.sqlite3
