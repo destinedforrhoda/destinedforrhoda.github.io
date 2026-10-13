@@ -1,12 +1,21 @@
 /* Wedding palette sampled from assets/colors.jpeg. All local assets use relative paths. */
 :root {
+   /* Wedding colors */
   --brown: #441F0F;
   --ivory: #F3EBE0;
   --beige: #CFAF93;
+
+   /* Secondary Color tones */
+  --brown_secondary: #964B00;
+  --ivory_secondary: #FFFFF0;
+  --beige_secondary: #F5F5DC;
+
+   /* Supporting tones */
   --ink: #2C180F;
   --muted: #583B29;
   --deep: #2B1209;
   --border: #B39378;
+
   --display: Georgia, "Times New Roman", serif;
   --body: Arial, Helvetica, sans-serif;
 }
@@ -24,7 +33,7 @@ button { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button, .button { cursor: pointer; }
 :focus-visible { outline: 3px solid var(--brown); outline-offset: 5px; }
-.dark :focus-visible, .hero :focus-visible { outline-color: var(--ivory); }
+.dark :focus-visible, .hero :focus-visible, footer :focus-visible { outline-color: var(--ivory_secondary); }
 [hidden] { display: none !important; }
 .wrap { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
 .section { padding-block: clamp(4rem, 8vw, 7rem); scroll-margin-top: 1rem; }
@@ -32,28 +41,29 @@ button, .button { cursor: pointer; }
 .eyebrow { font-size: .75rem; letter-spacing: .23em; text-transform: uppercase; margin-bottom: 1.2rem; }
 .muted { color: var(--muted); }
 .intro { max-width: 620px; margin: 1.5rem auto 0; }
-.button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: .75rem 1.8rem; background: var(--brown); color: var(--ivory); border: 1px solid var(--brown); text-decoration: none; font-size: .875rem; letter-spacing: .06em; transition: background .2s; }
-.button:hover { background: var(--deep); }
-.button.light { background: var(--ivory); border-color: var(--ivory); color: var(--deep); }
-.button.light:hover { background: var(--beige); }
+.button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: .75rem 1.8rem; background: var(--brown_secondary); color: var(--ivory_secondary); border: 1px solid var(--brown_secondary); text-decoration: none; font-size: .875rem; letter-spacing: .06em; transition: background .2s; }
+.button:hover { background: var(--brown); border-color: var(--brown); }
+.button.light { background: var(--ivory_secondary); border-color: var(--ivory_secondary); color: var(--deep); }
+.button.light:hover { background: var(--beige_secondary); border-color: var(--beige_secondary); }
 .skip { position: fixed; top: -100px; left: 1rem; z-index: 10; padding: .8rem; background: var(--ivory); }
 .skip:focus { top: 1rem; }
-header { background: var(--ivory); }
+header { background: var(--ivory_secondary); border-bottom: 1px solid var(--border); }
 .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding-block: .6rem; }
 .brand { font: 1.3rem var(--display); text-decoration: none; }
 .nav-links { display: flex; gap: 1.4rem; align-items: center; }
 .nav-links a { display: flex; align-items: center; min-height: 44px; text-decoration: none; font-size: .875rem; }
-.nav-links a:hover { color: var(--brown); text-decoration: underline; }
+.nav-links a:hover { color: var(--brown_secondary); text-decoration: underline; }
 .menu { display: none; border: 1px solid var(--border); background: transparent; min-height: 44px; padding: .4rem .8rem; color: var(--ink); }
 .hero { position: relative; min-height: 760px; min-height: min(880px, 92svh); isolation: isolate; display: grid; align-items: center; background: var(--deep); color: var(--ivory); }
 .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; z-index: -2; }
-.hero::before { content: ""; position: absolute; inset: 0; background: rgba(43, 18, 9, .49); z-index: -1; }
+.hero::before { content: ""; position: absolute; inset: 0; background: rgba(24, 15, 10, .49); z-index: -1; }
 .hero-copy { padding-block: 5rem; }
 h1 { font-size: clamp(3.4rem, 8vw, 7rem); line-height: 1.07; letter-spacing: -.04em; }
 h1 > span { display: block; }
 .hero-date { margin-top: 2rem; letter-spacing: .1em; }
 .hero .button { margin-top: 2rem; }
-.dark { background: var(--deep); color: var(--ivory); }
+.dark { background: linear-gradient(135deg, var(--deep), var(--brown)); color: var(--ivory_secondary); }
+.dark .eyebrow { color: var(--beige); }
 .save-date { display: grid; align-items: center; gap: 4rem; }
 .portrait { width: min(310px, 85%); margin: auto; transform: rotate(-3deg); border: 8px solid var(--ivory); }
 .portrait img { width: 100%; }
@@ -62,20 +72,21 @@ h1 > span { display: block; }
 .calendar caption { margin-bottom: 1rem; font-family: var(--display); font-size: 1.25rem; }
 .calendar th { font-weight: 400; font-size: .75rem; padding-bottom: .75rem; }
 .calendar td { height: 43px; text-align: center; }
-.calendar .chosen { display: grid; place-items: center; width: 38px; height: 38px; margin: auto; border-radius: 50%; background: var(--ivory); color: var(--deep); }
+.calendar .chosen { display: grid; place-items: center; width: 38px; height: 38px; margin: auto; border-radius: 50%; background: var(--beige); color: var(--deep); }
 .venues { display: grid; gap: 3rem; margin-top: 3.5rem; }
 .venue { padding: 1rem 1rem 2rem; }
 .venue + .venue { border-top: 1px solid var(--border); padding-top: 3rem; }
 .venue h3 { font-style: italic; font-size: 2.5rem; margin-bottom: 1.5rem; }
-.venue .time { color: var(--brown); letter-spacing: .13em; font-size: .875rem; margin-bottom: 1rem; }
+.venue .time { color: var(--brown_secondary); letter-spacing: .13em; font-size: .875rem; margin-bottom: 1rem; }
 .venue strong { display: block; font-weight: 400; font-size: 1.125rem; }
 .venue .button { margin-top: 1.75rem; }
-.tinted { background: var(--beige); }
+.tinted { background: var(--beige_secondary); }
+#schedule { background: linear-gradient(150deg, var(--beige_secondary), var(--ivory)); }
 .timeline { max-width: 830px; margin: 3.5rem auto 0; padding: 0; list-style: none; }
 .timeline li { position: relative; border-left: 1px solid var(--border); margin-left: .4rem; padding: 0 0 3rem 2rem; }
 .timeline li:last-child { padding-bottom: 0; }
-.timeline li::before { content: ""; position: absolute; width: 9px; height: 9px; background: var(--brown); border-radius: 50%; left: -5px; top: .55rem; }
-.timeline .time { font-size: .875rem; color: var(--brown); letter-spacing: .14em; }
+.timeline li::before { content: ""; position: absolute; width: 9px; height: 9px; background: var(--brown_secondary); border-radius: 50%; left: -5px; top: .55rem; }
+.timeline .time { font-size: .875rem; color: var(--brown_secondary); letter-spacing: .14em; }
 .timeline h3 { margin: .5rem 0 .8rem; }
 .palette-section { background: #607585; color: #FFFFFF; border-top: 1px solid #607585; }
 .palette-section .muted, .palette-section .swatch p { color: #FFFFFF; }
@@ -92,7 +103,7 @@ h1 > span { display: block; }
 .contacts li { border-bottom: 1px solid var(--border); }
 .contacts a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem 1rem; padding: .9rem 0; text-decoration: none; }
 .contacts a span:last-child { text-decoration: underline; text-underline-offset: .25em; }
-.rsvp-card { padding: clamp(1.2rem, 4vw, 2.5rem); border: 1px solid var(--border); align-self: start; }
+.rsvp-card { padding: clamp(1.2rem, 4vw, 2.5rem); border: 1px solid var(--border); border-top: 3px solid var(--brown_secondary); background: linear-gradient(135deg, var(--ivory_secondary), var(--beige_secondary)); align-self: start; }
 .rsvp-card h3 { margin-bottom: 1rem; }
 .rsvp-card .button { margin-top: 1.5rem; }
 .link-note { margin-top: 1rem; color: var(--muted); font-size: .8125rem; }
@@ -103,7 +114,7 @@ h1 > span { display: block; }
 .closing img { width: 100%; max-height: 700px; object-fit: cover; object-position: center 25%; }
 .closing-copy { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 4rem 1.5rem; }
 .closing-copy h2 { margin: 1.5rem 0; }
-footer { padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing: .06em; }
+footer { background: var(--brown); color: var(--ivory_secondary); padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing: .06em; }
 @media (min-width: 760px) {
   .save-date, .venues, .rsvp-layout, .closing { grid-template-columns: 1fr 1fr; }
   .venue + .venue { border-top: 0; border-left: 1px solid var(--border); padding-top: 1rem; }
@@ -132,11 +143,11 @@ footer { padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing
 }
 
 /* Live countdown uses fixed-width numerals to keep every tick steady. */
-.countdown-section { border-bottom: 1px solid var(--border); }
+.countdown-section { background: var(--ivory_secondary); border-bottom: 1px solid var(--border); }
 .countdown-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 760px; margin: 3rem auto 0; }
 .countdown-unit { display: flex; flex-direction: column; gap: .65rem; padding: .5rem clamp(.25rem, 2vw, 1.5rem); }
 .countdown-unit + .countdown-unit { border-left: 1px solid var(--border); }
-.countdown-number { font: clamp(2.5rem, 7vw, 5rem)/1.1 var(--display); color: var(--brown); font-variant-numeric: tabular-nums; }
+.countdown-number { font: clamp(2.5rem, 7vw, 5rem)/1.1 var(--display); color: var(--brown_secondary); font-variant-numeric: tabular-nums; }
 .countdown-label { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
 .countdown-message { margin-top: 2rem; font: italic 1.5rem/1.4 var(--display); }
 @media (max-width: 380px) {
@@ -145,7 +156,7 @@ footer { padding: 1.5rem; text-align: center; font-size: .875rem; letter-spacing
 }
 
 /* Guest moments link to the couple’s Google Form. */
-.share-moments { border-bottom: 1px solid var(--border); }
+.share-moments { background: linear-gradient(135deg, var(--beige), var(--ivory) 60%, var(--ivory_secondary)); border-bottom: 1px solid var(--border); }
 .share-moments h2 { max-width: 780px; margin-inline: auto; }
 .share-moments .button { margin-top: 2rem; }
 .moments-caption { max-width: 530px; margin: 1.4rem auto 0; color: var(--muted); font-size: .875rem; }
