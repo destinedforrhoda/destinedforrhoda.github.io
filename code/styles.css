@@ -20,7 +20,7 @@
   --body: Arial, Helvetica, sans-serif;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height, 77px); }
+html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--ivory); color: var(--ink); font: 1rem/1.7 var(--body); }
 h1, h2, h3, p, figure { margin: 0; }
 h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.15; }
@@ -47,7 +47,7 @@ button, .button { cursor: pointer; }
 .button.light:hover { background: var(--beige_secondary); border-color: var(--beige_secondary); }
 .skip { position: fixed; top: -100px; left: 1rem; z-index: 10; padding: .8rem; background: var(--ivory); }
 .skip:focus { top: 1rem; }
-header { position: sticky; top: 0; z-index: 5; max-height: 100svh; overflow-y: auto; background: var(--ivory_secondary); border-bottom: 1px solid var(--border); box-shadow: 0 3px 16px rgb(43 18 9 / 8%); }
+header { background: var(--ivory_secondary); border-bottom: 1px solid var(--border); }
 .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding-block: .6rem; }
 .brand { font: 1.3rem var(--display); text-decoration: none; }
 .nav-links { display: flex; gap: 1.4rem; align-items: center; }

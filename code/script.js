@@ -80,23 +80,14 @@ const weddingDate = document.getElementById("wedding-date")?.getAttribute("datet
     }
     const menu = document.querySelector(".menu");
     const navigation = document.getElementById("navigation");
-    const header = document.querySelector("header");
-    function updateNavigationHeight() {
-      document.documentElement.style.setProperty("--nav-height", `${header.getBoundingClientRect().height}px`);
-    }
-    updateNavigationHeight();
-    if ("ResizeObserver" in window) new ResizeObserver(updateNavigationHeight).observe(header);
-    else window.addEventListener("resize", updateNavigationHeight);
     function closeMenu() {
       menu.setAttribute("aria-expanded", "false");
       navigation.classList.remove("open");
-      updateNavigationHeight();
     }
     menu.addEventListener("click", () => {
       const open = menu.getAttribute("aria-expanded") !== "true";
       menu.setAttribute("aria-expanded", String(open));
       navigation.classList.toggle("open", open);
-      updateNavigationHeight();
     });
     navigation.addEventListener("click", event => {
       if (event.target.closest("a")) closeMenu();
