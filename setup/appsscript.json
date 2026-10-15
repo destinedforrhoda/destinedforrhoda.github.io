@@ -1,0 +1,6 @@
+{
+  "timeZone": "Africa/Accra",
+  "runtimeVersion": "V8",
+  "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": ["https://www.googleapis.com/auth/drive.readonly"]
+}

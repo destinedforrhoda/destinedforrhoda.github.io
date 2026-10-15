@@ -29,3 +29,11 @@ Edit the root `index.html` for text, links, and photos. The calendar and countdo
 After editing CSS or JavaScript, update their `?v=` values in `index.html` to refresh cached files.
 
 Commit changes and push to `main`. GitHub Pages publishes the repository root at https://destinedforrhoda.github.io/ . Do not add guest records or credentials to the repository.
+
+## Live Guest Memories gallery
+
+The last section before the footer is a photo/video gallery with download buttons. It stays in its waiting state until `code/guest-moments-config.js` contains a deployed Apps Script URL. Follow [the setup guide](setup/README.md) to connect your Google Drive media folder. Google hosts the read-only media feed; no Python server is required.
+
+Once connected, the gallery refreshes every 60 seconds in visible tabs and removes entries missing from a successful Drive snapshot. Response sheets, guest names and phone numbers are not read. See the setup guide for public-media permissions, file-name considerations and download behaviour.
+
+Run the sync/privacy regression checks with `node --test tests/guest-moments.test.cjs`.

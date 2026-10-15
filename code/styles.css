@@ -199,3 +199,20 @@ footer { background: var(--brown); color: var(--ivory_secondary); padding: 1.5re
 @media print {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Live guest gallery: media and download controls only. */
+.guest-memories { background: var(--ivory_secondary); }
+.guest-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin: 3rem auto 0; max-width: 1000px; align-items: start; }
+.guest-gallery:empty { display: none; }
+.guest-memory { min-width: 0; overflow: hidden; background: var(--ivory); border: 1px solid var(--border); }
+.guest-memory-media { display: block; width: 100%; border: 0; }
+img.guest-memory-media { height: auto; }
+iframe.guest-memory-media { aspect-ratio: 4 / 3; background: var(--deep); }
+.guest-memory-download { margin: 1rem; }
+.guest-memory-fallback { display: grid; min-height: 200px; place-items: center; }
+#guest-gallery-retry { margin-top: 1.5rem; }
+@media (max-width: 759px) {
+  .guest-gallery { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .guest-memories > .wrap { width: 100%; }
+  .guest-memories h2, .guest-memories .eyebrow, .guest-memories .moments-caption { padding-inline: 1.25rem; }
+}

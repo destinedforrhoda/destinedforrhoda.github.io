@@ -7,7 +7,9 @@
   <meta name="description" content="Desmond and Rhodalyn — 17 October 2026, Suhum. Wedding details, schedule and RSVP.">
   <meta name="theme-color" content="#441F0F">
   <link rel="icon" href="./assets/favicon.svg?v=20261012-palette" type="image/svg+xml">
-  <link rel="stylesheet" href="./code/styles.css?v=20261013-secondary">
+  <link rel="stylesheet" href="./code/styles.css?v=20261015-memories">
+  <script src="./code/guest-moments-config.js?v=20261015-memories" defer></script>
+  <script src="./code/guest-moments.js?v=20261015-memories" defer></script>
   <script src="./code/script.js?v=20261012-palette" defer></script>
 </head>
 <body>
@@ -134,7 +136,17 @@ With love,</p></div>
         <h2 id="moments-heading">Share with us your captured moments</h2>
         <p class="intro muted">We’d love to see the day through your eyes. Share your photos and videos with us.</p>
         <a class="button" href="https://forms.gle/iqYvLdGNRwUPn83f6" target="_blank" rel="noopener noreferrer" aria-describedby="moments-link-note">Upload moments</a>
-        <p class="moments-caption" id="moments-link-note">Opens our Google Form in a new tab. A Google account is required to upload. Please keep videos to 3 minutes or less and trim longer clips before uploading.</p>
+        <p class="moments-caption" id="moments-link-note">Opens our Google Form in a new tab. A Google account is required to upload. Please keep videos to 3 minutes or less and trim longer clips before uploading. Submitted photos and videos will be displayed on this website and available to download.</p>
+      </div>
+    </section>
+    <section class="section guest-memories center" id="guest-gallery-section" aria-labelledby="guest-gallery-heading">
+      <div class="wrap">
+        <p class="eyebrow">Memories we share</p>
+        <h2 id="guest-gallery-heading" tabindex="-1">Guest Memories</h2>
+        <p class="moments-caption" id="guest-gallery-status" role="status">Our shared memories will appear here soon.</p>
+        <button class="button" id="guest-gallery-retry" type="button" hidden>Try again</button>
+        <div class="guest-gallery" id="guest-gallery"></div>
+        <noscript><p class="moments-caption">Please enable JavaScript to view our shared photos and videos.</p></noscript>
       </div>
     </section>
   </main>
