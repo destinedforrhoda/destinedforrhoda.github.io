@@ -20,7 +20,7 @@
   --body: Arial, Helvetica, sans-serif;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height, 77px); }
 body { margin: 0; background: var(--ivory); color: var(--ink); font: 1rem/1.7 var(--body); }
 h1, h2, h3, p, figure { margin: 0; }
 h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.15; }
@@ -47,7 +47,7 @@ button, .button { cursor: pointer; }
 .button.light:hover { background: var(--beige_secondary); border-color: var(--beige_secondary); }
 .skip { position: fixed; top: -100px; left: 1rem; z-index: 10; padding: .8rem; background: var(--ivory); }
 .skip:focus { top: 1rem; }
-header { background: var(--ivory_secondary); border-bottom: 1px solid var(--border); }
+header { position: sticky; top: 0; z-index: 5; max-height: 100svh; overflow-y: auto; background: var(--ivory_secondary); border-bottom: 1px solid var(--border); box-shadow: 0 3px 16px rgb(43 18 9 / 8%); }
 .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding-block: .6rem; }
 .brand { font: 1.3rem var(--display); text-decoration: none; }
 .nav-links { display: flex; gap: 1.4rem; align-items: center; }
@@ -127,15 +127,17 @@ footer { background: var(--brown); color: var(--ivory_secondary); padding: 1.5re
   #gallery > .wrap > .center { padding-inline: 1.5rem; }
   .gallery { gap: 8px; margin-top: 2rem; }
   .gallery figure { min-height: 0; }
-  .js .menu { display: inline-block; }
-  .nav-links { width: 100%; flex-wrap: wrap; gap: .25rem 1.2rem; padding-block: .5rem; }
-  .js .nav-links { display: none; }
-  .js .nav-links.open { display: flex; }
   .hero { min-height: 680px; min-height: 88svh; align-items: end; }
   .hero > img { object-position: 57% top; }
   .hero-copy { padding-block: 3.5rem; }
   .hero .eyebrow { font-size: .7rem; }
   .closing img { max-height: none; object-fit: contain; }
+}
+@media (max-width: 1099px) {
+  .js .menu { display: inline-block; }
+  .nav-links { width: 100%; flex-wrap: wrap; gap: .25rem 1.2rem; padding-block: .5rem; }
+  .js .nav-links { display: none; }
+  .js .nav-links.open { display: flex; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
