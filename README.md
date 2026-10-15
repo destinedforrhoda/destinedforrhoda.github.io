@@ -32,7 +32,7 @@ Commit changes and push to `main`. GitHub Pages publishes the repository root at
 
 ## Live Guest Memories gallery
 
-The last section before the footer is a photo/video gallery with download buttons. It stays in its waiting state until `code/guest-moments-config.js` contains a deployed Apps Script URL. Follow [the setup guide](setup/README.md) to connect your Google Drive media folder. Google hosts the read-only media feed; no Python server is required.
+The last section before the footer is a photo/video gallery with download buttons. The deployed Apps Script URL is configured in `code/guest-moments-config.js`. Follow [the setup guide](setup/README.md) to manage or replace the Google Drive connection. Google hosts the read-only media feed; no Python server is required.
 
 Once connected, the gallery refreshes every 60 seconds in visible tabs and removes entries missing from a successful Drive snapshot. Response sheets, guest names and phone numbers are not read. See the setup guide for public-media permissions, file-name considerations and download behaviour.
 
