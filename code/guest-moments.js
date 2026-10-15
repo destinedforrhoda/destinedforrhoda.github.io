@@ -94,15 +94,6 @@
     download.rel = "noopener noreferrer";
     download.textContent = item.type === "video" ? "Download video" : "Download photo";
     card.append(media, download);
-    if (item.type === "video") {
-      const open = document.createElement("a");
-      open.className = "guest-memory-open";
-      open.href = driveUrl(`/file/d/${item.id}/view`, item);
-      open.target = "_blank";
-      open.rel = "noopener noreferrer";
-      open.textContent = "Watch on Google Drive";
-      card.append(open);
-    }
     return card;
   }
 
