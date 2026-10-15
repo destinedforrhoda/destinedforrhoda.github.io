@@ -69,7 +69,7 @@
     if (item.type === "video") {
       media.src = driveUrl(`/file/d/${item.id}/preview`, item);
       media.title = "Wedding video shared by a guest";
-      media.allow = "fullscreen";
+      media.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
       media.allowFullscreen = true;
     } else {
       media.src = driveUrl("/thumbnail", item, { id: item.id, sz: "w1600" });
@@ -94,6 +94,15 @@
     download.rel = "noopener noreferrer";
     download.textContent = item.type === "video" ? "Download video" : "Download photo";
     card.append(media, download);
+    if (item.type === "video") {
+      const open = document.createElement("a");
+      open.className = "guest-memory-open";
+      open.href = driveUrl(`/file/d/${item.id}/view`, item);
+      open.target = "_blank";
+      open.rel = "noopener noreferrer";
+      open.textContent = "Watch on Google Drive";
+      card.append(open);
+    }
     return card;
   }
 

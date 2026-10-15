@@ -216,3 +216,5 @@ iframe.guest-memory-media { aspect-ratio: 4 / 3; background: var(--deep); }
   .guest-memories > .wrap { width: 100%; }
   .guest-memories h2, .guest-memories .eyebrow, .guest-memories .moments-caption { padding-inline: 1.25rem; }
 }
+
+.guest-memory-open { display: block; margin: 0 1rem 1rem; font-size: .875rem; }
